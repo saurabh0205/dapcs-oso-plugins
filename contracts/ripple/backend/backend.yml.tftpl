@@ -51,10 +51,14 @@ services:
       BACKEND_CERT: $${BACKEND_PLUGIN_CERT}
     restart: always
 %{ if tpl.enable_ep11server }
-  ep11server:
+  ep11server_1:
     user: "0"
     restart: always
     image: ${tpl.grep11_image}
+    networks:
+      default:
+        aliases:
+          - ep11server
     ports:
       - "9876:9876"
     environment:
@@ -64,7 +68,27 @@ services:
       - ./cfg:/etc/c16
       %{ endif }
       - ./srv1:/cfg
-      - ./srv1/grep11server.yaml:/etc/ep11server/ep11server.yaml
+      - ./srv1/grep11server_1.yaml:/etc/ep11server/ep11server.yaml
+    devices:
+      - "/dev/z90crypt:/dev/z90crypt"
+  ep11server_2:
+    user: "0"
+    restart: always
+    image: ${tpl.grep11_image}
+    networks:
+      default:
+        aliases:
+          - ep11server
+    ports:
+      - "9877:9876"
+    environment:
+      PORT: "9876"
+    volumes:
+      %{ if !tpl.crypto_pass_enable }
+      - ./cfg:/etc/c16
+      %{ endif }
+      - ./srv1:/cfg
+      - ./srv1/grep11server_2.yaml:/etc/ep11server/ep11server.yaml
     devices:
       - "/dev/z90crypt:/dev/z90crypt"
 %{ endif }

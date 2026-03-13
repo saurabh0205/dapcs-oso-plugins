@@ -132,9 +132,16 @@ variable "GREP11_IMAGE" {
   default = null
 }
 
-variable "DOMAIN" {
+variable "DOMAIN_1" {
   type        = string
-  description = "Crypto appliance domain"
+  description = "Crypto domain 1"
+  nullable = true
+  default = null
+}
+
+variable "DOMAIN_2" {
+  type        = string
+  description = "Crypto domain 2"
   nullable = true
   default = null
 }

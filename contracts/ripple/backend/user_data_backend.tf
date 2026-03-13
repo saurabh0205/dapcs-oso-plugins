@@ -123,10 +123,17 @@ resource "local_file" "contract_encrypted" {
 }
 
 
-resource "local_file" "grep11_cfg" {
+resource "local_file" "grep11_cfg_1" {
   count = var.INTERNAL_GREP11 ? 1 : 0
-  content = local.grep11_cfg
-  filename = "${path.module}/docker-compose/srv1/grep11server.yaml"
+  content = local.grep11_cfg_1
+  filename = "${path.module}/docker-compose/srv1/grep11server_1.yaml"
+  file_permission = "0664"
+}
+
+resource "local_file" "grep11_cfg_2" {
+  count = var.INTERNAL_GREP11 ? 1 : 0
+  content = local.grep11_cfg_2
+  filename = "${path.module}/docker-compose/srv1/grep11server_2.yaml"
   file_permission = "0664"
 }
 
@@ -190,7 +197,7 @@ locals {
         client_key_file: "/etc/c16/c16client-key.pem"
         client_cert_file: "/etc/c16/c16client.pem"
   EOT
-  grep11_cfg = <<-EOT
+  grep11_cfg_1 = <<-EOT
     logging:
       levels:
         entry: debug
@@ -211,7 +218,31 @@ locals {
         keepalive:
           serverKeepaliveTime: 30
           serverKeepaliveTimeout: 5
-      domain: "${var.DOMAIN}"
+      domain: "${var.DOMAIN_1}"
+  EOT
+
+  grep11_cfg_2 = <<-EOT
+    logging:
+      levels:
+        entry: debug
+    ep11crypto:
+      enabled: true
+      connection:
+        address: 0.0.0.0
+        port: 9876
+        tls:
+          enabled: true
+          certfile: /cfg/grep11server.pem
+          keyfile: /cfg/grep11server-key.pem
+          mutual: true
+          cacert: /cfg/grep11ca.pem
+          cacertbytes:
+          certfilebytes:
+          keyfilebytes:
+        keepalive:
+          serverKeepaliveTime: 30
+          serverKeepaliveTimeout: 5
+      domain: "${var.DOMAIN_2}"
   EOT
 }
 
